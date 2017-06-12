@@ -41,6 +41,10 @@ public class CustomCursorAdapter extends CursorAdapter {
         TextView textViewPersonAddress = (TextView) view.findViewById(R.id.tv_person_address);
         textViewPersonAddress.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(4))));
 
+      //  TextView textViewPersonAddress = (TextView) view.findViewById(R.id.tv_person_address);
+      //  textViewPersonAddress.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(4))));
+
+
 
     }
 }
