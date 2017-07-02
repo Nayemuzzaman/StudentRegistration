@@ -58,9 +58,9 @@ public class EnterDataActivity extends Activity {
     }
 
     public void phoneCall(View view) {
-        String number = editTextPhone.getText().toString();
+        String personPhone = editTextPhone.getText().toString();
         Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:" + number));
+        callIntent.setData(Uri.parse("tel:" + personPhone));
         startActivity(callIntent);
     }
 }

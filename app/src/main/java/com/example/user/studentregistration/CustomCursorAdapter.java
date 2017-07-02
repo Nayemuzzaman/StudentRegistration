@@ -3,18 +3,24 @@ package com.example.user.studentregistration;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 public class CustomCursorAdapter extends CursorAdapter {
 
+    TextView textViewPersonPhone;
     public CustomCursorAdapter(Context context, Cursor c) {
         super(context, c);
     }
+
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -47,4 +53,6 @@ public class CustomCursorAdapter extends CursorAdapter {
 
 
     }
+
+
 }
