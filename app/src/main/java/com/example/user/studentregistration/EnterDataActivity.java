@@ -61,6 +61,10 @@ public class EnterDataActivity extends Activity {
         String personPhone = editTextPhone.getText().toString();
         Intent callIntent = new Intent(Intent.ACTION_CALL);
         callIntent.setData(Uri.parse("tel:" + personPhone));
+        if (ActivityCompat.checkSelfPermission(EnterDataActivity.this,
+                Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         startActivity(callIntent);
     }
 }
