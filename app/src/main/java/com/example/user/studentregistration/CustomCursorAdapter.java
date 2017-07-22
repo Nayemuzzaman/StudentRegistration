@@ -5,53 +5,123 @@ package com.example.user.studentregistration;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class CustomCursorAdapter extends CursorAdapter {
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
-    TextView textViewPersonPhone;
-    public CustomCursorAdapter(Context context, Cursor c) {
-        super(context, c);
+public class CustomCursorAdapter extends RecyclerView.Adapter<CustomCursorAdapter.TheViewHolder> {
+
+    LayoutInflater inflater;
+    Context c;
+    List<Person> lstModel = Collections.emptyList();
+
+    public CustomCursorAdapter(Context c, List<Person> lstModel) {
+        inflater = LayoutInflater.from(c);
+        this.c = c;
+        this.lstModel = lstModel;
+    }
+
+    @Override
+    public CustomCursorAdapter.TheViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = inflater.inflate(R.layout.row_item, parent, false);
+        CustomCursorAdapter.TheViewHolder holder = new CustomCursorAdapter.TheViewHolder(v);
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(CustomCursorAdapter.TheViewHolder holder, int position) {
+        Person model = lstModel.get(position);
+        holder.textViewPersonName.setText(model.getPerson_name());
+        holder.textViewPersonEmail.setText(model.getPerson_email());
+        holder.textViewPersonPhone.setText(model.getPerson_phone());
+        holder.textViewPersonAddress.setText(model.getPerson_address());
+    }
+
+    @Override
+    public int getItemCount() {
+        return lstModel.size();
     }
 
 
-    @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-       //view & adapter
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View retView = inflater.inflate(R.layout.row_item, parent, false);
-
-        return retView;
+    class TheViewHolder extends RecyclerView.ViewHolder {
+        TextView textViewPersonName, textViewPersonEmail, textViewPersonPhone, textViewPersonAddress;
+        Button call;
+        public TheViewHolder(final View itemView) {
+            super(itemView);
+            textViewPersonName = (TextView) itemView.findViewById(R.id.tv_person_name);
+            textViewPersonEmail = (TextView) itemView.findViewById(R.id.tv_person_email);
+            textViewPersonPhone = (TextView) itemView.findViewById(R.id.tv_person_phone);
+            textViewPersonAddress = (TextView) itemView.findViewById(R.id.tv_person_address);
+            call = (Button) itemView.findViewById(R.id.call_button);
+            call.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listenerSync.onItemClick(textViewPersonPhone, lstModel, getAdapterPosition());
+                }
+            });
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onRecycleViewItemClick(itemView, lstModel, getAdapterPosition());
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    longlistener.onRecycleViewLongItemClick(itemView, lstModel, getAdapterPosition());
+                    return false;
+                }
+            });
+        }
     }
 
-    @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void removeItem(int pos) {
+        lstModel.remove(pos);
+        notifyItemRemoved(pos);
+    }
 
+    CustomCursorAdapter.OnRecycleViewItemClickListener listener;
 
-        TextView textViewPersonName = (TextView) view.findViewById(R.id.tv_person_name);
-        textViewPersonName.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(1))));
+    CustomCursorAdapter.OnItemClickListener listenerSync;
 
-        TextView textViewPersonEmail = (TextView) view.findViewById(R.id.tv_person_email);
-        textViewPersonEmail.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(2))));
+    public interface OnItemClickListener {
+        void onItemClick(View v, List<Person> model, int position);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listenerSync = listener;
+    }
 
-        TextView textViewPersonPhone = (TextView) view.findViewById(R.id.tv_person_phone);
-        textViewPersonPhone.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(3))));
+    public void setOnRecycleViewItemClickListener(CustomCursorAdapter.OnRecycleViewItemClickListener listener) {
+        this.listener = listener;
+    }
 
-        TextView textViewPersonAddress = (TextView) view.findViewById(R.id.tv_person_address);
-        textViewPersonAddress.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(4))));
+    public interface OnRecycleViewItemClickListener {
+        public void onRecycleViewItemClick(View v, List<Person> model, int position);
+    }
 
-      //  TextView textViewPersonAddress = (TextView) view.findViewById(R.id.tv_person_address);
-      //  textViewPersonAddress.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(4))));
+    CustomCursorAdapter.OnRecycleViewLongItemClickListener longlistener;
 
+    public void setOnRecycleViewLongItemClickListener(CustomCursorAdapter.OnRecycleViewLongItemClickListener listener) {
 
+        this.longlistener = listener;
+    }
 
+    public interface OnRecycleViewLongItemClickListener {
+        public void onRecycleViewLongItemClick(View v, List<Person> model, int position);
     }
 
 

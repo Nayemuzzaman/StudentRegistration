@@ -3,20 +3,28 @@ package com.example.user.studentregistration;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
-public class MyActivity extends Activity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MyActivity extends Activity implements CustomCursorAdapter.OnItemClickListener, CustomCursorAdapter.OnRecycleViewItemClickListener, CustomCursorAdapter.OnRecycleViewLongItemClickListener{
 
     private CustomCursorAdapter customAdapter;
     private PersonDatabaseHelper databaseHelper;
     private static final int ENTER_DATA_REQUEST_CODE = 1;
-    private ListView listView;
+    private RecyclerView listView;
+    List<Person> listPerson;
 
     private static final String TAG = MyActivity.class.getSimpleName();
 
@@ -27,33 +35,31 @@ public class MyActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_of_student);
-
+        listPerson= new ArrayList<>();
         databaseHelper = new PersonDatabaseHelper(this);
 
-        listView = (ListView) findViewById(R.id.list_data);
-        listView.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "clicked on item: " + position);
-            }
-        });
+        listView = (RecyclerView) findViewById(R.id.list_data);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        listView.setLayoutManager(layoutManager);
 
         // Database query
 
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                customAdapter = new CustomCursorAdapter(MyActivity.this, databaseHelper.getAllData());
-                listView.setAdapter(customAdapter);
+                listPerson = getStudentList(databaseHelper.getAllData());
+                customAdapter = new CustomCursorAdapter(MyActivity.this, listPerson);
+                customAdapter.setOnRecycleViewItemClickListener(MyActivity.this);
+                customAdapter.setOnRecycleViewLongItemClickListener(MyActivity.this);
+                customAdapter.setOnItemClickListener(MyActivity.this);
+                listView.setAdapter(customAdapter);;
             }
         });
     }
 
     public void onClickEnterData(View btnAdd) {
-
         startActivityForResult(new Intent(this, EnterDataActivity.class), ENTER_DATA_REQUEST_CODE);
-
     }
 
     @Override
@@ -64,8 +70,42 @@ public class MyActivity extends Activity {
         if (requestCode == ENTER_DATA_REQUEST_CODE && resultCode == RESULT_OK) {
 
             databaseHelper.insertData(data.getExtras().getString("tag_person_name"), data.getExtras().getString("tag_person_Email"), data.getExtras().getString("tag_person_Phone"), data.getExtras().getString("tag_person_Address"));
-
-            customAdapter.changeCursor(databaseHelper.getAllData());
+            listPerson.clear();
+            listPerson = getStudentList(databaseHelper.getAllData());
+            customAdapter = new CustomCursorAdapter(MyActivity.this, listPerson);
+            customAdapter.setOnRecycleViewItemClickListener(MyActivity.this);
+            customAdapter.setOnRecycleViewLongItemClickListener(MyActivity.this);
+            customAdapter.setOnItemClickListener(MyActivity.this);
+            listView.setAdapter(customAdapter);
+            customAdapter.notifyDataSetChanged();
         }
+    }
+
+    public List<Person> getStudentList(Cursor cursor1){
+        List<Person> studentArrayList = new ArrayList<>();
+        Cursor cursor = cursor1;
+        while (cursor.moveToNext()){
+            studentArrayList.add(new Person(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(0))),
+                    cursor.getString(cursor.getColumnIndex(cursor.getColumnName(1))),
+                    cursor.getString(cursor.getColumnIndex(cursor.getColumnName(2))),
+                    cursor.getString(cursor.getColumnIndex(cursor.getColumnName(3))),
+                    cursor.getString(cursor.getColumnIndex(cursor.getColumnName(4)))));
+        }
+        return studentArrayList;
+    }
+
+    @Override
+    public void onItemClick(View v, List<Person> model, int position) {
+        Toast.makeText(getApplicationContext(), "Number: "+model.get(position).getPerson_phone(), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onRecycleViewItemClick(View v, List<Person> model, int position) {
+        Toast.makeText(getApplicationContext(), "Number: "+model.get(position).get_id(), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onRecycleViewLongItemClick(View v, List<Person> model, int position) {
+
     }
 }

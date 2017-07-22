@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/textViewTitle" />
 
-    <ListView android:id="@+id/list_data"
+    <android.support.v7.widget.RecyclerView android:id="@+id/list_data"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:layout_weight="1"/>
