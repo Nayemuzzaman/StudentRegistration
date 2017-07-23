@@ -57,6 +57,7 @@ public class EnterDataActivity extends Activity {
         }
     }
 
+    //zyrif: Check if this method is redundant.
     public void phoneCall(View view) {
         String personPhone = editTextPhone.getText().toString();
         Intent callIntent = new Intent(Intent.ACTION_CALL);
