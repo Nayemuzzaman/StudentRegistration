@@ -59,7 +59,7 @@ public class CustomCursorAdapter extends RecyclerView.Adapter<CustomCursorAdapte
 
     class TheViewHolder extends RecyclerView.ViewHolder {
         TextView textViewPersonName, textViewPersonEmail, textViewPersonPhone, textViewPersonAddress;
-        Button call;
+        Button call,send_msg;
         public TheViewHolder(final View itemView) {
             super(itemView);
             textViewPersonName = (TextView) itemView.findViewById(R.id.tv_person_name);
@@ -73,10 +73,11 @@ public class CustomCursorAdapter extends RecyclerView.Adapter<CustomCursorAdapte
                     listenerSync.onItemClick(textViewPersonPhone, lstModel, getAdapterPosition());
                 }
             });
-            itemView.setOnClickListener(new View.OnClickListener() {
+            send_msg = (Button) itemView.findViewById(R.id.msg_button);
+            send_msg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onRecycleViewItemClick(itemView, lstModel, getAdapterPosition());
+                    listener.onRecycleViewItemClick(textViewPersonPhone, lstModel, getAdapterPosition());
                 }
             });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {

@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -28,6 +29,7 @@ public class MyActivity extends Activity implements CustomCursorAdapter.OnItemCl
     private PersonDatabaseHelper databaseHelper;
     private static final int ENTER_DATA_REQUEST_CODE = 1;
     private final int PERMISSION_REQUEST_CALL_PHONE = 1;
+    private final int PERMISSION_REQUEST_SEND_SMS = 1;
     private RecyclerView listView;
     List<Person> listPerson;
 
@@ -108,6 +110,7 @@ public class MyActivity extends Activity implements CustomCursorAdapter.OnItemCl
         if(ActivityCompat.checkSelfPermission(MyActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
             Toast.makeText(MyActivity.this, "App doesn't have CALL_PHONE permission", Toast.LENGTH_SHORT).show();
             ActivityCompat.requestPermissions(MyActivity.this, new String[]{Manifest.permission.CALL_PHONE}, PERMISSION_REQUEST_CALL_PHONE);
+            //ActivityCompat.requestPermissions(MyActivity.this, new String[]{Manifest.permission.SEND_SMS}, PERMISSION_REQUEST_SEND_SMS);
         }
         else
             startActivity(callIntent);
@@ -115,7 +118,18 @@ public class MyActivity extends Activity implements CustomCursorAdapter.OnItemCl
 
     @Override
     public void onRecycleViewItemClick(View v, List<Person> model, int position) {
-        Toast.makeText(getApplicationContext(), "Number: "+model.get(position).get_id(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Number: "+model.get(position).get_id(), Toast.LENGTH_LONG).show();
+        Toast.makeText(MyActivity.this, "Number: "+model.get(position).getPerson_phone(), Toast.LENGTH_SHORT).show();
+
+        String number = "tel:" + model.get(position).getPerson_phone().trim();
+        Intent sendIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(number));
+        Toast.makeText(getApplicationContext(), "Number: "+model.get(position).getPerson_phone(), Toast.LENGTH_SHORT).show();
+            if (ActivityCompat.checkSelfPermission(MyActivity.this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MyActivity.this, new String[]{Manifest.permission.SEND_SMS}, PERMISSION_REQUEST_SEND_SMS);
+            }
+         else
+           startActivity(sendIntent);
+
     }
 
     @Override

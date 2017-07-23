@@ -37,6 +37,14 @@
         android:textSize="15sp"
         android:text="Click To Call" />
 
+    <Button
+        android:id="@+id/msg_button"
+        android:text="Message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:textSize="15sp"/>
+
     <TextView android:id="@+id/tv_person_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
